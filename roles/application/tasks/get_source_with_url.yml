@@ -1,0 +1,33 @@
+---
+
+- name: Download tarball
+  get_url: url={{ application_source_url | mandatory }}
+           dest=/tmp/application.tar.gz
+           sha256sum={{ application_source_sha256sum | mandatory }}
+  tags:
+    - install
+    - application
+
+- file: state=directory path=/tmp/application
+  tags:
+    - install
+    - application
+
+- name: Extract application with tar
+  command: >
+      chdir={{ application_installpath }} 
+      /bin/tar xf /tmp/application.tar.gz -C /tmp/application
+  tags:
+    - install
+    - application
+
+- shell: ls -1 /tmp/application/
+  register: application_source_path
+
+- name: Copy source to install path
+  command: "rsync -ar /tmp/application/{{ application_source_path.stdout }}/ {{ application_installpath }}"
+
+- file: state=absent path=/tmp/application
+  tags:
+    - install
+    - application

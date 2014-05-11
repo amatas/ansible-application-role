@@ -1,0 +1,68 @@
+---
+
+- name: Create application path
+  file: state=directory path={{ application_installpath | mandatory }} 
+        owner={{ application_user | default("root") }}
+        group={{ application_group | default("root") }}
+        mode={{ application_mode | default(0644) }}
+  tags:
+    - install
+    - application
+
+- name: Get source application url
+  include: get_source_with_url.yml
+  when: application_source_method == "url" and application_source_url is defined
+ 
+- name: Get source application git
+  include: get_source_with_git.yml
+  when: application_source_method == "git"
+
+- name: Set application config files
+  template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }}
+            owner={{ item.owner }} group={{ item.group }}
+  with_items: application_configure_files_list
+  when: application_configure_files_list is defined
+  tags:
+    - configure
+    - application
+
+- name: Configure application
+  command: chdir={{ application_installpath }}
+           {{ application_configure_command }}
+  when: application_configure_command is defined
+  tags:
+    - configure
+    - application
+ 
+  #The update could be more secure: backup, rollback, etc
+- name: Update application
+  command: chdir={{ application_installpath }}
+           {{ application_update_command }}
+  when: application_update_command is defined
+  tags:
+    - configure
+    - application
+ 
+- name: Change ownership of Application installation path
+  file: path={{ application_installpath }} 
+        owner={{ application_user | default("root") }}
+        group={{ application_group | default("root") }}
+        state=directory recurse=yes
+  tags:
+    - configure
+    - application
+
+- name: Set custom file/dir permissions
+  file: path={{ application_installpath }}/{{item.path}} owner={{item.owner}}
+        group={{item.group}} mode={{item.mode}} recurse={{item.recurse}}
+  with_items: application_paths_permissions
+  when: application_paths_permissions is defined
+  tags:
+    - configure
+    - application
+ 
+# - name: Set restrictions
+
+# - name: Set monitoring
+
+# - name: Test application

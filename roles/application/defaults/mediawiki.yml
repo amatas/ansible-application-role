@@ -1,0 +1,38 @@
+---
+ 
+# mediawiki version, can be override in playbook
+mediawiki_version: 1.22.5
+
+# Database parameters
+mediawiki_db_pass: dbPassword
+mediawiki_db_user: dbUser
+mediawiki_db_name: mwiki
+mediawiki_db_host: localhost
+mediawiki_db_type: mysql
+
+# See php maintenance/install.php command for more info
+# Setup parameters
+mediawiki_scriptpath: /wiki
+mediawiki_adm_user: wikiadmin
+mediawiki_adm_pass: wikipass
+mediawiki_name: mediawiki
+
+# Application role variables
+application_paths_permissions: [
+    #  { path: images, owner: apache, group: apache, mode: 700, recurse: false },
+  { path: maintenance, owner: root, group: root, mode: 700, recurse: true }
+]
+
+#application_source_method: url
+#application_source_url: "http://releases.wikimedia.org/mediawiki/1.22/mediawiki-{{ mediawiki_version }}.tar.gz"
+
+application_source_method: git
+application_source_url: https://gerrit.wikimedia.org/r/p/mediawiki/core.git
+application_installpath: /var/www/html/wiki2
+application_source_sha256sum: 3acae43cb7859f5403c022f285d2281c41cf78a8b914777da5a049f8934cf722
+application_configure_command: > 
+    /usr/bin/php maintenance/install.php --dbserver {{ mediawiki_db_host }} 
+    --dbname {{ mediawiki_db_name }} --dbuser {{ mediawiki_db_user }} 
+    --dbpass {{ mediawiki_db_pass }} --dbtype {{ mediawiki_db_type }} 
+    --pass {{ mediawiki_adm_pass }} --scriptpath {{ mediawiki_scriptpath }} 
+    {{ mediawiki_name }} {{ mediawiki_adm_user }}
