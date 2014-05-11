@@ -1,0 +1,23 @@
+---
+ 
+- file: state=directory path=/tmp/application/source.git
+  tags:
+    - install
+    - application
+ 
+- name: Install application with git
+  git: repo={{ application_source_url | mandatory }}
+       dest=/tmp/application/source.git
+       version={{ application_version | default("HEAD")}}
+  tags:
+    - install
+    - application
+ 
+- name: Copy source to install path
+  command: "rsync -ar --exclude .git /tmp/application/source.git/ {{ application_installpath }}"
+  
+- file: state=absent path=/tmp/application
+  tags:
+    - install
+    - application
+ 
