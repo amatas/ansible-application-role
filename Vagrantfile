@@ -30,9 +30,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "all_groups:children" => ["webservers"]
       }
       ansible.limit = 'all'
-#      ansible.raw_arguments  = "--ask-vault-pass"
+#     ansible.raw_arguments  = "--ask-vault-pass"
 #     Debug option
-#      ansible.raw_arguments  = "--vault-password-file=secret_file_plain_pass"
+#     ansible.raw_arguments  = "--vault-password-file=secret_file_plain_pass"
       ansible.verbose = 'vvvv'
     end
   end

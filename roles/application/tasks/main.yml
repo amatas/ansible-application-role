@@ -1,7 +1,7 @@
 ---
 
 - name: Create application path
-  file: state=directory path={{ application_installpath | mandatory }} 
+  file: state=directory path={{ application_installpath | mandatory }}
         owner={{ application_user | default("root") }}
         group={{ application_group | default("root") }}
         mode={{ application_mode | default(0644) }}
@@ -12,10 +12,10 @@
 - name: Get source application url
   include: get_source_with_url.yml
   when: application_source_method == "url" and application_source_url is defined
- 
+
 - name: Get source application git
   include: get_source_with_git.yml
-  when: application_source_method == "git"
+  when: application_source_method == "git" and application_source_url is defined
 
 - name: Set application config files
   template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }}
@@ -27,13 +27,13 @@
     - application
 
 - name: Configure application
-  command: chdir={{ application_installpath }}
-           {{ application_configure_command }}
-  when: application_configure_command is defined
+  shell: chdir={{ application_installpath }} {{ item }}
+  with_items: application_configure_commands
+  when: application_configure_commands is defined
   tags:
     - configure
     - application
- 
+
   #The update could be more secure: backup, rollback, etc
 - name: Update application
   command: chdir={{ application_installpath }}
@@ -42,9 +42,9 @@
   tags:
     - configure
     - application
- 
+
 - name: Change ownership of Application installation path
-  file: path={{ application_installpath }} 
+  file: path={{ application_installpath }}
         owner={{ application_user | default("root") }}
         group={{ application_group | default("root") }}
         state=directory recurse=yes
@@ -60,7 +60,7 @@
   tags:
     - configure
     - application
- 
+
 # - name: Set restrictions
 
 # - name: Set monitoring

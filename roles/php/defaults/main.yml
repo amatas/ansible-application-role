@@ -1,0 +1,35 @@
+---
+php_conf_dir: /etc
+
+# php_mode: php_fpm
+php_mode: php
+
+php_packages:
+  - php
+  - php-mysql
+  - php-gd
+  - php-xml
+
+php_fpm_packages:
+  - php-cli
+  - php-mysql
+  - php-gd
+  - php-xml
+  - php-fpm
+
+php_parameters:
+  expose_php: 'Off'
+  display_errors: 'Off'
+  file_uploads: 'On'
+  upload_max_filesize: '1M'
+  post_max_size: '1M'
+  max_execution_time: '60'
+  max_input_time: '60'
+  memory_limit: '256M'
+  date.timezone: 'Etc/GMT-4'
+  allow_url_fopen: 'On'
+  allow_url_include: 'Off'
+
+php_fpm_parameters:
+  listen: /var/run/php5-fpm.sock
+

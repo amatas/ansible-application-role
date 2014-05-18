@@ -1,0 +1,44 @@
+---
+
+- name: Install php interpreter as module
+  yum: name={{ item }} state=present
+  with_items: php_packages
+  when: php_mode == 'php'
+  tags:
+    - install
+    - php
+
+- name: Install php interpreter as fastcgi
+  yum: name={{ item }} state=present
+  with_items: php_fpm_packages
+  when: php_mode == 'php_fpm'
+  tags:
+    - install
+    - php
+
+- name: Setting variables in config file php-fpm
+  lineinfile: dest=/etc/php-fpm.d/www.conf state=present regexp="^ *;? *({{ item.key }} *=) *(.*)" line="\\1 {{item.value}}" backrefs=yes
+  with_dict: php_fpm_parameters
+  when: php_mode == 'php_fpm'
+  notify: restart php_fpm
+  tags:
+    - configure
+    - php 
+
+- name: Put default php.ini
+  template: src=php.ini.j2 dest={{ php_conf_dir }}/php.ini mode=0644
+      validate="grep ANSIBLE_MANAGED %s"
+  tags:
+    - install
+    - php
+
+- name: Setting variables in config file php.ini
+  lineinfile: dest=/etc/php.ini state=present regexp="^ *;? *({{ item.key }} *=) *(.*)" line="\\1 {{item.value}}" backrefs=yes
+  with_dict: php_parameters
+  tags:
+    - configure
+    - php 
+
+- name: Service php_fpm must be enabled
+  service: name=php-fpm state=started enabled=yes
+  when: php_mode == 'php_fpm'

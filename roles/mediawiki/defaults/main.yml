@@ -1,7 +1,7 @@
 ---
- 
-# mediawiki version, can be override in playbook
-mediawiki_version: 1.22.5
+
+# mediawiki last version, can be override in playbook
+mediawiki_version: 1.22.6
 
 # Database parameters
 mediawiki_db_pass: dbPassword
@@ -28,7 +28,7 @@ application_paths_permissions: [
 
 application_source_method: git
 application_source_url: https://gerrit.wikimedia.org/r/p/mediawiki/core.git
-application_installpath: /var/www/html/wiki2
+application_installpath: /var/www/html/wiki
 application_source_sha256sum: 3acae43cb7859f5403c022f285d2281c41cf78a8b914777da5a049f8934cf722
 application_configure_command: > 
     /usr/bin/php maintenance/install.php --dbserver {{ mediawiki_db_host }} 

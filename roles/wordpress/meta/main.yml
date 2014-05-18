@@ -1,0 +1,84 @@
+---
+
+allow_duplicates: yes
+dependencies:
+  - role: php
+  - role: webserver
+    webserver_vhosts:
+      - servername: "{{ wordpress_fqdn | default('wordpress.sample.org') }}"
+        documentroot: "{{ wordpress_installpath | default('/var/www/html/wordpress') }}"
+  - role: database
+    mysql_bind_address: "127.0.0.1"
+    mysql_root_db_pass: wpress_t3.A!
+    mysql_db:
+      - name: "{{ wordpress_db_name | default ('wpress') }}"
+    mysql_users: 
+      - name: "{{ wordpress_db_user | default ('dbUser') }}"
+        pass: "{{ wordpress_db_pass | default ('dbPassword') }}"
+        host: "{{ wordpress_db_host | default ('localhost') }}"
+        priv: "{{ wordpress_db_name | default ('wpress') }}.*:ALL"
+    mysql_repl_role: none 
+  - role: application
+    application_installpath: "{{wordpress_installpath | default('/var/www/html/wordpress') }}"
+    application_user: apache
+    application_group: apache
+    application_configure_commands: 
+      - curl -kL https://raw.github.com/wp-cli/builds/gh-pages/phar/wp-cli.phar > /usr/bin/wp
+      - chmod +x /usr/bin/wp
+      - "/usr/bin/wp core download --path={{ wordpress_installpath | default ('/var/www/html/wordpress')}} --force"
+      - "rm -f {{ wordpress_installpath | default ('/var/www/html/wordpress') }}/wp-config.php ; /usr/bin/wp core config --dbname={{ wordpress_db_name | default ('wpress') }} --dbuser={{ wordpress_db_user | default ('dbUser') }} --dbpass={{ wordpress_db_pass | default ('dbPassword') }} --dbhost={{ wordpress_db_host | default ('localhost') }} --dbprefix='wp'"
+      - "/usr/bin/wp core install --url={{ wordpress_fqdn | default('wordpress.sample.org') }} --title={{ wordpress_name | default('wordpress') }} --admin_user={{ wordpress_adm_user | default('wpadmin') }} --admin_password={{ wordpress_adm_pass | default('wppass') }} --admin_email={{ wordpress_adm_user |default('wpadmin')}}@{{ wordpress_fqdn | default('wordpress.sample.org') }}"
+      - chmod +x {{ wordpress_installpath | default('/var/www/html/wordpress') }}
+
+
+# Database parameters
+#wordpress_db_pass: dbPassword
+#wordpress_db_user: dbUser
+#wordpress_db_name: wpress
+#wordpress_db_host: localhost
+#wordpress_db_type: mysql
+#
+## Setup parameters
+#wordpress_adm_user: wpadmin
+#wordpress_adm_pass: wppass
+#wordpress_name: wordpress
+
+# Application role variables
+#application_paths_permissions: [
+#  { path: images, owner: apache, group: apache, mode: 700, recurse: false },
+#  { path: maintenance, owner: root, group: root, mode: 700, recurse: true }
+#]
+
+#application_user: apache
+#application_group: apache
+#
+#
+#application_configure_commands: 
+#    - curl -kL https://raw.github.com/wp-cli/builds/gh-pages/phar/wp-cli.phar > /usr/bin/wp
+#    - chmod +x /usr/bin/wp
+#    - "/usr/bin/wp core download --path={{ wordpress_installpath }} --force"
+#    - "rm -f {{ wordpress_installpath }}/wp-config.php ; /usr/bin/wp core config --dbname={{ wordpress_db_name }} --dbuser={{ wordpress_db_user }}
+#      --dbpass={{ wordpress_db_pass }} --dbhost={{ wordpress_db_host }} --dbprefix='wp'"
+#    - "/usr/bin/wp core install --url={{ wordpress_fqdn }} --title={{ wordpress_name }} --admin_user={{ wordpress_adm_user }}
+#      --admin_password={{ wordpress_adm_pass }} --admin_email={{ wordpress_adm_user }}@{{ wordpress_fqdn }}"
+#    - chmod +x {{ wordpress_installpath }}
+#
+
+
+# The following variables are global, must be in a superior role.
+#webserver_vhosts:
+#  - {servername: "{{ application_fqdn }}", documentroot: "/var/www/html/wordpress"}
+
+
+mysql_bind_address: "127.0.0.1"
+mysql_root_db_pass: wpress_t3.A!
+mysql_db: [{
+  name: "{{ wordpress_db_name }}"
+  }]
+mysql_users: [{
+  name: "{{ wordpress_db_user }}",
+  pass: "{{ wordpress_db_pass }}",
+  host: "{{ wordpress_db_host }}",
+  priv: "{{ wordpress_db_name }}.*:ALL"
+}]
+mysql_repl_role: none 

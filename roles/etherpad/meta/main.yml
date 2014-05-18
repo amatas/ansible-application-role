@@ -1,0 +1,19 @@
+---
+allow_duplicates: yes
+
+dependencies:
+  - role: nodejs
+    nodejs_packages:
+      - nodejs
+      - npm
+      - gzip
+      - git-core
+      - curl
+      - python
+      - openssl-devel
+  - role: application
+    application_source_method: "{{ etherpad_soruce_method | default('git') }}"
+    application_source_url: "{{ etherpad_source_url | default('git://github.com/ether/etherpad-lite.git') }}"
+    application_installpath: "{{ etherpad_installpath | default('/var/www/etherpad') }}"
+    application_configure_commands:
+      - bin/installDeps.sh

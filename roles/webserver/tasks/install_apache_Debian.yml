@@ -1,0 +1,10 @@
+---
+
+- name: Install Apache web server for Debian derivatives
+  yum: name={{ item }} state=present
+  with_items:
+   - apache2
+
+- name: Start and enable Apache web server for Debian derivatives
+  service: name=apache2 state=started enabled=yes
+

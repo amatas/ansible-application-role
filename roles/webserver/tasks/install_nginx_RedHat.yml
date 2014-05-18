@@ -1,0 +1,32 @@
+---
+
+- name: Install nginx web server for RedHat derivatives
+  yum: name={{ item }} state=present
+  with_items:
+   - nginx
+  tags:
+   - install
+   - nginx
+
+- name: Copy nginx.conf file
+  copy: src=nginx.conf dest=/etc/nginx/nginx.conf owner=root group=root mode=0644 backup=yes
+  notify:
+   - restart nginx
+  tags:
+   - configure
+   - nginx
+
+- name: Set up virtual hosts
+  template: src=vhosts-nginx.conf.j2 dest=/etc/nginx/conf.d/vhosts.conf
+      owner=root group=root mode=0644
+  notify:
+   - restart nginx
+  tags:
+   - configure
+   - nginx
+
+- name: Start and enable nginx web server for RedHat derivatives
+  service: name=nginx state=started enabled=yes
+  tags:
+   - install
+   - nginx

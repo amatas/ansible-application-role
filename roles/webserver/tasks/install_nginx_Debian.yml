@@ -1,0 +1,10 @@
+---
+
+- name: Install Nginx web server for Debian derivatives
+  yum: name={{ item }} state=present
+  with_items:
+   - nginx
+
+- name: Start and enable Apache web server for Debian derivatives
+  service: name=nginx state=started enabled=yes
+

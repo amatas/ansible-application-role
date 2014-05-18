@@ -1,0 +1,32 @@
+
+# Listen ports and VirtualHosts.
+
+{% for port in webserver_listen_ports | unique %}
+Listen {{ port }}
+{% endfor %}
+
+DirectoryIndex index.php index.html
+
+{% for port in webserver_listen_ports | unique %}
+{% for vhost in webserver_vhosts %}
+<VirtualHost *:{{ port }}>
+  ServerName {{ vhost.servername }}
+  DocumentRoot {{ vhost.documentroot }}
+{% if vhost.serveradmin is defined %}
+  ServerAdmin {{ vhost.serveradmin }}
+{% endif %}
+  <Directory "{{ vhost.documentroot }}">
+    AllowOverride All
+    Options -Indexes FollowSymLinks
+    Order allow,deny
+    Allow from all
+  </Directory>
+{% if vhost.extra_parameters is defined %}
+  {{ vhost.extra_parameters }}
+{% endif %}
+  CustomLog /var/log/httpd/vhost-{{ vhost.servername }}-access.log combined
+  ErrorLog /var/log/httpd/vhost-{{ vhost.servername }}-error.log
+</VirtualHost>
+
+{% endfor %}
+{% endfor %}

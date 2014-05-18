@@ -1,0 +1,13 @@
+---
+
+- name: restart httpd
+  service: name=httpd state=restarted
+
+- name: reload httpd
+  service: name=httpd state=reloaded
+
+- name: restart nginx
+  service: name=nginx state=restarted
+
+- name: reload nginx
+  service: name=nginx state=reloaded

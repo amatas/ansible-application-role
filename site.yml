@@ -4,6 +4,17 @@
 
 - name: Apply common configuration to all nodes
   hosts: all
-
   roles:
-    - {role: application, application_installpath: /var/www/wiki}
+#    - {
+#    	role: mediawiki-application,
+#       application_version: 1.22.6,
+#    	application_installpath: /var/www/wiki,
+#    	application_fqdn: wiki.sample.org
+#    }
+
+    - role: wordpress
+      php_mode: php_fpm
+      application_fqdn: wordpress.sample.org
+    - role: etherpad
+      etherpad_installpath: /var/www/etherpad
+      etherpad_fqdn: etherpad.sample.org

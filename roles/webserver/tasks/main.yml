@@ -1,0 +1,13 @@
+---
+
+- include: install_apache_RedHat.yml
+  when: ansible_os_family == 'RedHat' and webserver_type == 'apache'
+
+- include: install_apache_Debian.yml
+  when: ansible_os_family == 'Debian' and webserver_type == 'apache'
+
+- include: install_nginx_RedHat.yml
+  when: ansible_os_family == 'RedHat' and webserver_type == 'nginx'
+
+- include: install_nginx_Debian.yml
+  when: ansible_os_family == 'Debian' and webserver_type == 'nginx'

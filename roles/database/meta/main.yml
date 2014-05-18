@@ -1,0 +1,14 @@
+---
+galaxy_info:
+  author: "Alfredo Matas"
+  company: Home
+  license: license (BSD)
+  min_ansible_version: 1.4 
+  platforms:
+   - name: EL
+     versions:
+      - 6
+  categories:
+   - database:sql
+dependencies: []
+
